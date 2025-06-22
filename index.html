@@ -1,66 +1,76 @@
+Make a website for me , which have a payment interface for upi , which should have a upi ID : hussainmajeda61-3@oksbi, and there should be a space to enter the desired amount and below there should be 4 buttons with different upi apps , first should be a button for paytm , as soon as I enter the amount then press paytm it should open the paytm app and the amount automatically written over there, 2nd button for gpay , if I press gpay then it should open the gpay app with the amount already written over there , then 3rd button for phonepe , if I press phonepe , then it should open the phonepe app with the amount already written over there , and 4th button for other upi apps , which should show all upi available apps , on the users phone , once the user makes payment it should redirect to the website that , the payment is made .
 <!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loan Payment</title>
+  <title>UPI Payment</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      padding: 20px;
     }
-    input {
+    input[type="number"] {
       padding: 10px;
-      margin-bottom: 20px;
+      font-size: 16px;
       width: 200px;
-      font-size: 16px;
+      margin-bottom: 20px;
     }
-    button {
-      padding: 10px 20px;
+    .upi-button {
+      display: inline-block;
       margin: 10px;
-      font-size: 16px;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background-color: #f0f0f0;
       cursor: pointer;
+    }
+    .upi-button img {
+      width: 100px;
+      height: auto;
     }
   </style>
 </head>
 <body>
-  <h1>Make the Loan Payment</h1>
-  <input type="number" id="amount" placeholder="Enter Amount" />
-  <div>
-    <button onclick="payWithApp('paytm')">Pay with Paytm</button>
-    <button onclick="payWithApp('gpay')">Pay with GPay</button>
-    <button onclick="payWithApp('phonepe')">Pay with PhonePe</button>
-    <button onclick="payWithApp('other')">Pay with Other UPI App</button>
-  </div>  <script>
-    function payWithApp(app) {
-      const amount = document.getElementById("amount").value;
-      if (!amount || amount <= 0) {
-        alert("Please enter a valid amount.");
-        return;
-      }
-      const upiID = "hussainmajeda61-3@oksbi";
-      const name = "Payment to Hussain";
-      const urlEncodedName = encodeURIComponent(name);
-      const upiURL = `upi://pay?pa=${upiID}&pn=${urlEncodedName}&am=${amount}&cu=INR`;
+  <h2>Pay via UPI</h2>
+  <p>UPI ID: <strong>hussainmajeda61-3@oksbi</strong></p>
+  <input type="number" id="amount" placeholder="Enter amount" />  <div>
+    <button class="upi-button" onclick="pay('paytm')">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Paytm_logo.png" alt="Paytm" />
+    </button><button class="upi-button" onclick="pay('gpay')">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Google_Pay_Logo.svg" alt="GPay" />
+</button>
 
-      let intentURL = upiURL;
+<button class="upi-button" onclick="pay('phonepe')">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fb/PhonePe_Logo.png" alt="PhonePe" />
+</button>
+
+<button class="upi-button" onclick="pay('other')">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/UPI-Logo-vector.svg" alt="Other UPI Apps" />
+</button>
+
+  </div>  <script>
+    function pay(app) {
+      const amount = document.getElementById('amount').value;
+      const upiId = 'hussainmajeda61-3@oksbi';
+      const name = 'Payment';
+      const txnRef = 'TXN' + Date.now();
+      let url = `upi://pay?pa=${upiId}&pn=${name}&am=${amount}&cu=INR&tn=${txnRef}`;
 
       if (app === 'paytm') {
-        intentURL = `intent://${upiURL.replace("upi://", "")}#Intent;scheme=upi;package=net.one97.paytm;end`;
+        url = 'paytmmp://pay?' + url.split('?')[1];
       } else if (app === 'gpay') {
-        intentURL = `intent://${upiURL.replace("upi://", "")}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
+        url = 'tez://upi/pay?' + url.split('?')[1];
       } else if (app === 'phonepe') {
-        intentURL = `intent://${upiURL.replace("upi://", "")}#Intent;scheme=upi;package=com.phonepe.app;end`;
-      } else {
-        // For other UPI apps
-        intentURL = upiURL;
+        url = 'phonepe://upi/pay?' + url.split('?')[1];
       }
 
-      window.location.href = intentURL;
+      // open UPI app
+      window.location.href = url;
 
-      // Optional: After 5 seconds, assume payment completed (simulate)
+      // fallback redirect after 5 seconds (in case no app opens)
       setTimeout(() => {
-        window.location.href = "payment-success.html";
+        window.location.href = "./confirmation.html";
       }, 5000);
     }
   </script></body>
