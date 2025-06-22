@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loan Payment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    input {
+      padding: 10px;
+      margin-bottom: 20px;
+      width: 200px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Make the Loan Payment</h1>
+  <input type="number" id="amount" placeholder="Enter Amount" />
+  <div>
+    <button onclick="payWithApp('paytm')">Pay with Paytm</button>
+    <button onclick="payWithApp('gpay')">Pay with GPay</button>
+    <button onclick="payWithApp('phonepe')">Pay with PhonePe</button>
+    <button onclick="payWithApp('other')">Pay with Other UPI App</button>
+  </div>  <script>
+    function payWithApp(app) {
+      const amount = document.getElementById("amount").value;
+      if (!amount || amount <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+      const upiID = "hussainmajeda61-3@oksbi";
+      const name = "Payment to Hussain";
+      const urlEncodedName = encodeURIComponent(name);
+      const upiURL = `upi://pay?pa=${upiID}&pn=${urlEncodedName}&am=${amount}&cu=INR`;
+
+      let intentURL = upiURL;
+
+      if (app === 'paytm') {
+        intentURL = `intent://${upiURL.replace("upi://", "")}#Intent;scheme=upi;package=net.one97.paytm;end`;
+      } else if (app === 'gpay') {
+        intentURL = `intent://${upiURL.replace("upi://", "")}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
+      } else if (app === 'phonepe') {
+        intentURL = `intent://${upiURL.replace("upi://", "")}#Intent;scheme=upi;package=com.phonepe.app;end`;
+      } else {
+        // For other UPI apps
+        intentURL = upiURL;
+      }
+
+      window.location.href = intentURL;
+
+      // Optional: After 5 seconds, assume payment completed (simulate)
+      setTimeout(() => {
+        window.location.href = "payment-success.html";
+      }, 5000);
+    }
+  </script></body>
+</html>
